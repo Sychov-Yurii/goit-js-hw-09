@@ -1,1 +1,0 @@
-{"mappings":"AACWA,SAASC,cAAc,IACzBD,SAASC,cAAc","sources":["src/js/01-color-switcher.js"],"sourcesContent":["const refs = {\n    start: document.querySelector(''), \n    stop:document.querySelector(''),\n};\n"],"names":["document","querySelector"],"version":3,"file":"01-color-switcher.1bae48c2.js.map"}
