@@ -9,11 +9,9 @@ const options = {
   onClose(selectedDates) {
     const selectedDate = selectedDates[0];
     if (selectedDate <= new Date()) {
-      // Вибрана дата в минулому
       alert("Please choose a date in the future");
       document.querySelector('[data-start]').disabled = true;
     } else {
-      // Вибрана дата в майбутньому
       document.querySelector('[data-start]').disabled = false;
     }
   },
@@ -76,3 +74,5 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
+
+flatpickr("#datetime-picker", options);
