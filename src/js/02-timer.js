@@ -23,7 +23,7 @@ const hoursElement = countdownTimer.querySelector('[data-hours]');
 const minutesElement = countdownTimer.querySelector('[data-minutes]');
 const secondsElement = countdownTimer.querySelector('[data-seconds]');
 
-let countdownInterval;
+let countdownInterval; // Перейменовано з const на let
 
 function updateTimerDisplay(time) {
   daysElement.textContent = addLeadingZero(time.days);
