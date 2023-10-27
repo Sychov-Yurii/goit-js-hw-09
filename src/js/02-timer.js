@@ -1,83 +1,109 @@
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
+import 'flatpickr/dist/l10n/uk.js';
+import Notiflix from 'notiflix';
 
-        import flatpickr from "flatpickr";
+const dateTimePicker = document.getElementById('datetime-picker');
 
-        import "flatpickr/dist/flatpickr.min.css";
+const options = {
+  enableTime: true,
+  time_24hr: true,
+  defaultDate: new Date(),
+  minuteIncrement: 1,
+  onClose(selectedDates) {
+    if (selectedDates <= Date.now()) {
+      Notiflix.Notify.failure('Please choose a date in the future');
+      dateTimePicker.value = '';
+      startButton.disabled = true;
+    } else {
+      startButton.disabled = false;
+    }
+  },
+};
 
-        // Ініціалізація flatpickr
-        const datetimePicker = flatpickr("#datetime-picker", {
-          enableTime: true,
-          time_24hr: true,
-          defaultDate: new Date(),
-          minuteIncrement: 1,
-          onClose(selectedDates) {
-            const selectedDate = selectedDates[0];
-            const now = new Date();
-            
-            if (selectedDate <= now) {
-              Notiflix.Notify.failure("Please choose a date in the future");
-              document.querySelector('[data-start]').disabled = true;
-            } else {
-              document.querySelector('[data-start]').disabled = false;
-            }
-          },
-        });
+flatpickr(dateTimePicker, options);
 
-        const countdownTimer = document.querySelector('.timer');
-        const daysElement = countdownTimer.querySelector('[data-days]');
-        const hoursElement = countdownTimer.querySelector('[data-hours]');
-        const minutesElement = countdownTimer.querySelector('[data-minutes]');
-        const secondsElement = countdownTimer.querySelector('[data-seconds]');
+const startButton = document.querySelector('button[data-start]');
+const timerFields = {
+  days: document.querySelector('[data-days]'),
+  hours: document.querySelector('[data-hours]'),
+  minutes: document.querySelector('[data-minutes]'),
+  seconds: document.querySelector('[data-seconds]'),
+};
+let countdownInterval;
 
-        let countdownInterval;
+startButton.addEventListener('click', () => {
+  const selectedDate = new Date(dateTimePicker.value);
+  const currentTime = Date.now();
 
-        function updateTimerDisplay(time) {
-          daysElement.textContent = addLeadingZero(time.days);
-          hoursElement.textContent = addLeadingZero(time.hours);
-          minutesElement.textContent = addLeadingZero(time.minutes);
-          secondsElement.textContent = addLeadingZero(time.seconds);
-        }
+  if (selectedDate <= currentTime) {
+    Notiflix.Notify.failure('Please choose a date in the future');
+  } else {
+    countdownInterval = setInterval(() => {
+      updateTimer(selectedDate);
+    }, 1000);
+  }
+});
 
-        function addLeadingZero(value) {
-          return value.toString().padStart(2, '0');
-        }
+function updateTimer(endTime) {
+  const now = Date.now();
+  const timeRemaining = endTime - now;
 
-        document.querySelector('[data-start]').addEventListener('click', () => {
-          const selectedDate = datetimePicker.selectedDates[0];
-          const currentTime = new Date();
+  function updateTimerDisplay(days, hours, minutes, seconds) {
+    timerFields.days.textContent = addLeadingZero(days);
+    timerFields.hours.textContent = addLeadingZero(hours);
+    timerFields.minutes.textContent = addLeadingZero(minutes);
+    timerFields.seconds.textContent = addLeadingZero(seconds);
+  }
 
-          if (selectedDate <= currentTime) {
-            Notiflix.Notify.failure("Please choose a date in the future");
-            return;
-          }
+  if (timeRemaining <= 0) {
+    clearInterval(countdownInterval);
+    startButton.removeAttribute('disabled');
+    updateTimerDisplay(0, 0, 0, 0);
+    return;
+  }
 
-          const timeDifference = selectedDate - currentTime;
+  const { days, hours, minutes, seconds } = convertMs(timeRemaining);
 
-          clearInterval(countdownInterval);
+  updateTimerDisplay(days, hours, minutes, seconds);
+}
 
-          countdownInterval = setInterval(() => {
-            if (timeDifference <= 0) {
-              clearInterval(countdownInterval);
-              updateTimerDisplay({ days: 0, hours: 0, minutes: 0, seconds: 0 });
-              Notiflix.Notify.success("Countdown has finished!");
-              return;
-            }
+function convertMs(ms) {
+  const second = 1000;
+  const minute = second * 60;
+  const hour = minute * 60;
+  const day = hour * 24;
 
-            const time = convertMs(timeDifference);
-            updateTimerDisplay(time);
-            timeDifference -= 1000;
-          }, 1000);
-        });
+  const days = Math.floor(ms / day);
+  const hours = Math.floor((ms % day) / hour);
+  const minutes = Math.floor(((ms % day) % hour) / minute);
+  const seconds = Math.floor((((ms % day) % hour) % minute) / second);
 
-        function convertMs(ms) {
-          const second = 1000;
-          const minute = second * 60;
-          const hour = minute * 60;
-          const day = hour * 24;
+  return { days, hours, minutes, seconds };
+}
 
-          const days = Math.floor(ms / day);
-          const hours = Math.floor((ms % day) / hour);
-          const minutes = Math.floor((ms % hour) / minute);
-          const seconds = Math.floor((ms % minute) / second);
+function addLeadingZero(value) {
+  return value.toString().padStart(2, '0');
+}
 
-          return { days, hours, minutes, seconds };
-        }
+const divContainerCalendar = document.querySelector('.container');
+const inputCalendar = document.getElementById('datetime-picker');
+const inputStartCalendar = document.querySelector('button[data-start]');
+const styleTimer = document.querySelector('.timer');
+const spanStyleTimer = document.querySelectorAll('.timer span');
+
+styleTimer.style.display = 'flex';
+styleTimer.style.justifyContent = 'center';
+styleTimer.style.alignItems = 'center';
+styleTimer.style.width = '100%';
+styleTimer.style.height = '100%';
+styleTimer.style.flexDirection = 'column';
+
+spanStyleTimer.forEach(span => {
+  span.style.display = 'inline-block';
+  span.style.backgroundColor = '#f7f7f7';
+  span.style.border = '1px solid #ddd';
+  span.style.padding = '10px';
+  span.style.borderRadius = '5px';
+  span.style.fontSize = '20px';
+});
