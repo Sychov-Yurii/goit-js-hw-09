@@ -10,9 +10,12 @@ const refs = {
 
 console.log(refs.start, refs.stop);
 
+refs.stop.disabled = true;
+
 refs.start.addEventListener('click', () => {
     if (!intervalId) {
         refs.start.disabled = true;
+        refs.stop.disabled = false;
         intervalId = setInterval(changeBackgroundColor, 1000);        
     }
 });
@@ -21,6 +24,7 @@ refs.stop.addEventListener('click', () => {
     clearInterval(intervalId);
     intervalId = null;
     refs.start.disabled = false;
+    fs.stop.disabled = true;
 });
 
 function changeBackgroundColor() {
