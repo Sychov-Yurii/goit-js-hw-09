@@ -24,7 +24,8 @@ refs.stop.addEventListener('click', () => {
     clearInterval(intervalId);
     intervalId = null;
     refs.start.disabled = false;
-    fs.stop.disabled = true;
+    refs.stop.disabled = true;
+    
 });
 
 function changeBackgroundColor() {
