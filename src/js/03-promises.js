@@ -16,7 +16,7 @@ function createPromise(position, delay) {
 const form = document.querySelector('.form');
 
 form.addEventListener('submit', e => {
-  form.reset()
+  // form.reset()
   const delayInput = +e.target.elements.delay.value;
   const stepInput = +e.target.elements.step.value;
   const amountInput = +e.target.elements.amount.value;
