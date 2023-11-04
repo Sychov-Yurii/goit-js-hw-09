@@ -1,9 +1,5 @@
 import Notiflix from 'notiflix';
 
-// Notiflix.Notify.success('This is a success message');
-// Notiflix.Notify.failure('This is a failure message');
-
-
 const dateTimePicker = document.getElementById('datetime-picker');
 const startButton = document.querySelector('button[data-start]');
 const timerFields = {
@@ -40,7 +36,6 @@ startButton.addEventListener('click', () => {
     const selectedDate = new Date(dateTimePicker.value);
     const currentTime = Date.now();
     if (selectedDate <= currentTime) {
-      startButton.disabled = true;
         Notiflix.Notify.failure('Please choose a date in the future');
     } else {
         countdownInterval = setInterval(() => {
@@ -52,7 +47,9 @@ startButton.addEventListener('click', () => {
 function updateTimer(endTime) {
     const now = Date.now();
     const timeRemaining = endTime - now;
-
+    startButton.style.display = 'none'; 
+    dateTimePicker.style.display = 'none'; 
+    
     if (timeRemaining <= 0) {
         clearInterval(countdownInterval);
         updateTimerDisplay(0, 0, 0, 0);
